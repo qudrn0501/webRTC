@@ -11,17 +11,20 @@ app.get("/", (req, res) => res.render("home"));
 app.get("/*", (req, res) => res.redirect("/"));
 
 const handleListen = () => console.log(`Listening on http://localhost:3000`);
-
 const server = http.createServer(app);
-
 const wss = new WebSocket.Server({ server });
+
+function onSocketClose() {
+  console.log("Disconnected from the Browser X");
+}
+function onSocketMessage(message) {
+  console.log(message.toString('utf8'));
+}
 
 wss.on("connection", (socket) => {
   console.log("Connected to Browser O");
-  socket.on("close", () => console.log("Disconnected from the Browser X"));
-  socket.on("message", (message) => {
-    console.log(message.toString('utf8'));
-  });
+  socket.on("close", onSocketClose);
+  socket.on("message", onSocketMessage);
   socket.send("hello!!!");
 })
 
